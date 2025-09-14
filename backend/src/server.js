@@ -1,13 +1,18 @@
 const express = require('express');
 const dotenv = require('dotenv');
+
+// Only load .env file in development, use Railway env vars in production
+if (process.env.NODE_ENV !== 'production') {
+  const path = require('path');
+  dotenv.config({ path: path.join(__dirname, '../.env') });
+}
+
 const morgan = require('morgan');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/error');
 
-// Load env vars
-dotenv.config();
 
 // Connect to database
 connectDB();
@@ -31,8 +36,12 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Enable CORS
+const corsOrigin = process.env.CLIENT_URL || 'http://localhost:5173';
+console.log('CORS Origin:', corsOrigin);
+console.log('CLIENT_URL env var:', process.env.CLIENT_URL);
+
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173', // Default Vite port
+  origin: corsOrigin,
   credentials: true
 }));
 
@@ -63,7 +72,10 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 const server = app.listen(
   PORT,
-  console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`)
+  () => {
+    console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+    console.log(`Health check available at: http://localhost:${PORT}/health`);
+  }
 );
 
 // Handle unhandled promise rejections
