@@ -7,6 +7,14 @@ exports.registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
+    // Validate required fields
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide name, email, and password'
+      });
+    }
+
     // Check if user already exists
     const userExists = await User.findOne({ email });
     if (userExists) {
@@ -25,9 +33,28 @@ exports.registerUser = async (req, res) => {
 
     sendTokenResponse(user, 201, res);
   } catch (error) {
+    console.error('Registration error:', error);
+    
+    // Handle specific MongoDB errors
+    if (error.code === 11000) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email already registered'
+      });
+    }
+    
+    // Handle validation errors
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors).map(val => val.message);
+      return res.status(400).json({
+        success: false,
+        message: messages.join(', ')
+      });
+    }
+
     res.status(500).json({
       success: false,
-      message: error.message
+      message: 'Registration failed. Please try again.'
     });
   }
 };
@@ -67,9 +94,10 @@ exports.loginUser = async (req, res) => {
 
     sendTokenResponse(user, 200, res);
   } catch (error) {
+    console.error('Login error:', error);
     res.status(500).json({
       success: false,
-      message: error.message
+      message: 'Login failed. Please try again.'
     });
   }
 };

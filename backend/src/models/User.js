@@ -31,6 +31,9 @@ const UserSchema = new mongoose.Schema(
   }
 );
 
+// Ensure proper indexing
+UserSchema.index({ email: 1 }, { unique: true });
+
 // Encrypt password using bcrypt
 UserSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {

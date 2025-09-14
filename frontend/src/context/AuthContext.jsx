@@ -42,16 +42,20 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
+      console.log('Attempting registration with:', userData);
       const response = await authAPI.register(userData);
+      console.log('Registration response:', response.data);
+      
       const { token, user } = response.data;
       localStorage.setItem('token', token);
       setUser(user);
       return true;
     } catch (error) {
-      setError(
-        error.response?.data?.message ||
-        'Registration failed. Please try again.'
-      );
+      console.error('Registration error:', error);
+      const errorMessage = error.response?.data?.message || 
+                          error.message || 
+                          'Registration failed. Please try again.';
+      setError(errorMessage);
       return false;
     } finally {
       setLoading(false);
@@ -63,16 +67,20 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
+      console.log('Attempting login with:', credentials);
       const response = await authAPI.login(credentials);
+      console.log('Login response:', response.data);
+      
       const { token, user } = response.data;
       localStorage.setItem('token', token);
       setUser(user);
       return true;
     } catch (error) {
-      setError(
-        error.response?.data?.message ||
-        'Login failed. Please check your credentials.'
-      );
+      console.error('Login error:', error);
+      const errorMessage = error.response?.data?.message || 
+                          error.message || 
+                          'Login failed. Please check your credentials.';
+      setError(errorMessage);
       return false;
     } finally {
       setLoading(false);
