@@ -36,7 +36,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Enable CORS
-const corsOrigin = process.env.CLIENT_URL || 'http://localhost:5173';
+const corsOrigin = process.env.CLIENT_URL || 'https://frontend-task-manager-assignment-mb.vercel.app';
 console.log('CORS Origin:', corsOrigin);
 console.log('CLIENT_URL env var:', process.env.CLIENT_URL);
 
