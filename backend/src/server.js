@@ -45,6 +45,17 @@ app.get('/', (req, res) => {
   res.send('API is running...');
 });
 
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'OK',
+    message: 'Server is running',
+    timestamp: new Date().toISOString()
+  });
+});
+
+
 // Error handler middleware
 app.use(errorHandler);
 
