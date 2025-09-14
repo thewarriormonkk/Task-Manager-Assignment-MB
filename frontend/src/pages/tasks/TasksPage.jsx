@@ -76,26 +76,22 @@ const TasksPage = () => {
     let filtered = [];
     switch(activeTab) {
       case 'completed':
+        // Show only completed tasks
         filtered = tasks.filter(task => task.status === 'completed');
         break;
       case 'overdue':
+        // Show tasks that are overdue (due date < today AND not completed)
         filtered = tasks.filter(task => {
           const dueDate = new Date(task.dueDate);
-          // Normalize due date to start of day
           const dueDateNormalized = new Date(dueDate.getFullYear(), dueDate.getMonth(), dueDate.getDate());
-          // Overdue: due date is before today AND task is not completed
           return dueDateNormalized < today && task.status !== 'completed';
         });
         break;
       case 'pending':
       default:
-        filtered = tasks.filter(task => {
-          const dueDate = new Date(task.dueDate);
-          // Normalize due date to start of day
-          const dueDateNormalized = new Date(dueDate.getFullYear(), dueDate.getMonth(), dueDate.getDate());
-          // Pending: task is not completed AND (due date is today or in the future)
-          return task.status !== 'completed' && dueDateNormalized >= today;
-        });
+        // Show all non-completed tasks (pending and in-progress)
+        // This includes tasks due today or in the future, regardless of due date
+        filtered = tasks.filter(task => task.status !== 'completed');
         break;
     }
 

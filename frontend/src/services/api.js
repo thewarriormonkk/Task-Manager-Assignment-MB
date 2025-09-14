@@ -1,10 +1,15 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://web-production-0220f.up.railway.app/api';
+const API_URL = import.meta.env.VITE_API_URL;
+
+if (!API_URL) {
+  console.error('VITE_API_URL environment variable is required');
+  throw new Error('VITE_API_URL environment variable is not set');
+}
 
 // Debug logging
 console.log('API_URL being used:', API_URL);
-console.log('VITE_API_URL env var:', import.meta.env.VITE_API_URL);
+console.log('Environment:', import.meta.env.MODE);
 
 // Create axios instance with default config
 const api = axios.create({

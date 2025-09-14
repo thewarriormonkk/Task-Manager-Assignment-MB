@@ -1,11 +1,9 @@
 const express = require('express');
 const dotenv = require('dotenv');
 
-// Only load .env file in development, use Railway env vars in production
-if (process.env.NODE_ENV !== 'production') {
-  const path = require('path');
-  dotenv.config({ path: path.join(__dirname, '../.env') });
-}
+// Load .env file - will be overridden by production environment variables
+const path = require('path');
+dotenv.config({ path: path.join(__dirname, '../.env') });
 
 const morgan = require('morgan');
 const cors = require('cors');
@@ -36,9 +34,12 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Enable CORS
-const corsOrigin = process.env.CLIENT_URL || 'https://frontend-task-manager-assignment-mb.vercel.app';
+const corsOrigin = process.env.CLIENT_URL;
+if (!corsOrigin) {
+  console.error('CLIENT_URL environment variable is required');
+  process.exit(1);
+}
 console.log('CORS Origin:', corsOrigin);
-console.log('CLIENT_URL env var:', process.env.CLIENT_URL);
 
 app.use(cors({
   origin: corsOrigin,
@@ -75,12 +76,18 @@ app.get('/health', (req, res) => {
 app.use(errorHandler);
 
 // Start server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
+if (!PORT) {
+  console.error('PORT environment variable is required');
+  process.exit(1);
+}
+
 const server = app.listen(
   PORT,
   () => {
-    console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+    console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
     console.log(`Health check available at: http://localhost:${PORT}/health`);
+    console.log(`API Base URL: ${process.env.API_BASE_URL || `http://localhost:${PORT}/api`}`);
   }
 );
 

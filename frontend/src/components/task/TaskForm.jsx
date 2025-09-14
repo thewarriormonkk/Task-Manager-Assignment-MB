@@ -84,6 +84,8 @@ const TaskForm = ({ task, isEditing = false }) => {
         const newTask = await createTask(taskData);
         
         toast.success('Task created successfully');
+        // Ensure we're on the pending tab when navigating to tasks
+        sessionStorage.setItem('activeTaskTab', 'pending');
         navigate(`/tasks`);
       }
     } catch (err) {
