@@ -34,6 +34,14 @@ const UserSchema = new mongoose.Schema(
 // Ensure proper indexing
 UserSchema.index({ email: 1 }, { unique: true });
 
+// Normalize email to lowercase before saving
+UserSchema.pre('save', function (next) {
+  if (this.email) {
+    this.email = this.email.toLowerCase().trim();
+  }
+  next();
+});
+
 // Encrypt password using bcrypt
 UserSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {

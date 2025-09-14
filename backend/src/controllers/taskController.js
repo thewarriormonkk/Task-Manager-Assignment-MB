@@ -486,8 +486,11 @@ exports.deleteTask = async (req, res) => {
       });
     }
 
-    // Make sure user owns the task
-    if (task.user._id.toString() !== req.user.id) {
+    // Make sure user owns the task or is assigned to it
+    const isOwner = task.user._id.toString() === req.user.id;
+    const isAssigned = task.assignedTo && task.assignedTo._id.toString() === req.user.id;
+    
+    if (!isOwner && !isAssigned) {
       return res.status(401).json({
         success: false,
         message: 'Not authorized to delete this task'

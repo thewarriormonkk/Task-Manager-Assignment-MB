@@ -15,8 +15,11 @@ exports.registerUser = async (req, res) => {
       });
     }
 
-    // Check if user already exists
-    const userExists = await User.findOne({ email });
+    // Normalize email to lowercase for case-insensitive comparison
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Check if user already exists (case-insensitive)
+    const userExists = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } });
     if (userExists) {
       return res.status(400).json({
         success: false,
@@ -24,10 +27,10 @@ exports.registerUser = async (req, res) => {
       });
     }
 
-    // Create user
+    // Create user with normalized email
     const user = await User.create({
       name,
-      email,
+      email: normalizedEmail,
       password
     });
 
@@ -74,8 +77,11 @@ exports.loginUser = async (req, res) => {
       });
     }
 
-    // Check for user
-    const user = await User.findOne({ email }).select('+password');
+    // Normalize email to lowercase for case-insensitive login
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Check for user (case-insensitive)
+    const user = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } }).select('+password');
     if (!user) {
       return res.status(401).json({
         success: false,
