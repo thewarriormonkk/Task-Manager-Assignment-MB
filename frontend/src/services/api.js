@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'https://web-production-0220f.up.railway.app/api';
 
 // Debug logging
 console.log('API_URL being used:', API_URL);
