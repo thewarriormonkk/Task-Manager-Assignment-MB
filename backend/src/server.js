@@ -45,6 +45,12 @@ app.use(cors({
   credentials: true
 }));
 
+// Add request logging middleware
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path} - Origin: ${req.get('Origin') || 'No Origin'}`);
+  next();
+});
+
 // Mount routers
 app.use('/api/users', userRoutes);
 app.use('/api/tasks', taskRoutes);
